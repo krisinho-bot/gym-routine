@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gym Routine — BBR</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#1d1d1f;--muted:#86868b;--canvas:#fff;--parchment:#f5f5f7;--s1:#272729;--blue:#0066cc;--blue2:#2997ff;--div:#e0e0e0;--green:#34c759;--orange:#ff9500;--red:#ff3b30}
+body{background:var(--canvas);color:var(--ink);font-family:"SF Pro Text",system-ui,-apple-system,sans-serif;line-height:1.47;-webkit-font-smoothing:antialiased}
+.hero{background:var(--s1);padding:40px 24px 32px;color:#fff;text-align:center}
+.hero h1{font-family:"SF Pro Display",system-ui,sans-serif;font-size:34px;font-weight:600;letter-spacing:-.374px;margin-bottom:4px}
+.hero p{font-size:15px;color:rgba(255,255,255,.6)}
+.badges{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;padding:5px 12px;border-radius:9999px;letter-spacing:-.12px}
+.badge--blue{background:rgba(41,151,255,.15);color:#2997ff}
+.badge--green{background:rgba(52,199,89,.15);color:#34c759}
+.badge--orange{background:rgba(255,149,0,.15);color:#ff9500}
+.ctn{max-width:640px;margin:0 auto;padding:0 20px}
+.sh{margin:40px 0 16px}
+.sh h2{font-family:"SF Pro Display",system-ui,sans-serif;font-size:28px;font-weight:600;letter-spacing:-.374px;line-height:1.1}
+.sh p{font-size:15px;color:var(--muted);margin-top:4px}
+.week{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0}
+.day{background:var(--parchment);border-radius:12px;padding:14px;text-align:center}
+.day--a{border:2px solid var(--blue)}
+.day--b{border:2px solid var(--orange)}
+.day--rest{border:2px solid var(--div);color:var(--muted)}
+.day-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px}
+.day-val{font-size:20px;font-weight:700;letter-spacing:-.2px}
+.day-tag{font-size:11px;font-weight:600;margin-top:4px;border-radius:9999px;padding:2px 8px;display:inline-block}
+.day--a .day-tag{background:rgba(0,102,204,.1);color:var(--blue)}
+.day--b .day-tag{background:rgba(255,149,0,.1);color:var(--orange)}
+.exercise{background:var(--canvas);border-radius:16px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.06);margin:12px 0}
+.exercise-header{display:flex;align-items:center;gap:14px;padding:16px 20px}
+.exercise-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.workout-a .exercise-num{background:rgba(0,102,204,.1);color:var(--blue)}
+.workout-b .exercise-num{background:rgba(255,149,0,.1);color:var(--orange)}
+.exercise-name{font-size:17px;font-weight:600;letter-spacing:-.374px}
+.exercise-sets{font-size:13px;color:var(--muted);margin-top:1px}
+.exercise-body{padding:0 20px 16px}
+.exercise-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--blue);font-weight:500;padding:6px 14px;background:rgba(0,102,204,.06);border-radius:9999px;text-decoration:none;margin-top:4px}
+.exercise-link:active{background:rgba(0,102,204,.12)}
+.exercise-weight{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--green);background:rgba(52,199,89,.1);border-radius:9999px;padding:4px 10px;margin-left:8px}
+.alts{padding:0 20px 16px}
+.alt-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.alt-item{font-size:13px;color:#424245;padding:4px 0}
+.alt-item a{color:var(--blue);text-decoration:none}
+.rules{background:var(--parchment);border-radius:16px;padding:20px;margin:12px 0}
+.rule{display:flex;gap:10px;font-size:14px;color:#424245;margin-bottom:8px;line-height:1.43}
+.rule:last-child{margin-bottom:0}
+.rule-icon{flex-shrink:0;width:20px;text-align:center;font-size:14px}
+.progress-card{background:var(--s1);border-radius:16px;padding:20px;margin:12px 0;color:#fff}
+.progress-card h3{font-size:18px;font-weight:600;margin-bottom:12px}
+.progress-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px}
+.progress-row:last-child{border-bottom:none}
+.progress-label{color:rgba(255,255,255,.6)}
+.progress-val{font-weight:600;color:var(--blue2)}
+.tab-wrap{display:flex;gap:0;margin:16px 0 0;background:var(--parchment);border-radius:12px;overflow:hidden}
+.tab{flex:1;text-align:center;padding:12px 8px;font-size:14px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s;border:none;background:none}
+.tab.active{background:var(--canvas);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.footer{text-align:center;padding:20px 20px 48px;font-size:12px;color:var(--muted)}
+.footer span{color:var(--blue)}
+.dv{height:1px;background:var(--div);margin:32px 0}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>Basic Beginner Routine</h1>
+<p>by /r/fitness · 3 dias/semana · 30-45 min</p>
+<div class="badges">
+<span class="badge badge--blue">Full Body</span>
+<span class="badge badge--green">Fuerza</span>
+<span class="badge badge--orange">8-12 semanas</span>
+</div>
+</div>
+
+<div class="ctn">
+
+<!-- SEMANA TIPO -->
+<div class="sh"><h2>Semana tipo</h2><p>Semana 1: A/B/A · Semana 2: B/A/B</p></div>
+<div class="week">
+<div class="day day--a"><div class="day-label">Lun</div><div class="day-val">A</div><div class="day-tag">Pull/Push/Legs</div></div>
+<div class="day day--b"><div class="day-label">Mie</div><div class="day-val">B</div><div class="day-tag">Pull/Push/Legs</div></div>
+<div class="day day--a"><div class="day-label">Vie</div><div class="day-val">A</div><div class="day-tag">Pull/Push/Legs</div></div>
+</div>
+
+<!-- TABS -->
+<div class="tab-wrap">
+<button class="tab active" onclick="showTab('a')">Workout A</button>
+<button class="tab" onclick="showTab('b')">Workout B</button>
+<button class="tab" onclick="showTab('rules')">Reglas</button>
+</div>
+
+<!-- WORKOUT A -->
+<div id="tab-a" class="tab-content active">
+<div class="workout-a" style="padding-top:16px">
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">1</div><div><div class="exercise-name">Bent Over Row</div><div class="exercise-sets">2x5 + 1xAMRAP · +1.25kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/barbell-bent-over-row" target="_blank">Ver forma correcta →</a>
+<span class="exercise-weight">15.25kg</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/dumbbell-one-arm-row" target="_blank">Dumbbell One Arm Row</a> (mancuerna)</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/seated-cable-row" target="_blank">Seated Cable Row</a> (cable)</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">2</div><div><div class="exercise-name">Bench Press</div><div class="exercise-sets">2x5 + 1xAMRAP · +1.25kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/barbell-bench-press" target="_blank">Ver forma correcta →</a>
+<span class="exercise-weight">26.25kg</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/dumbbell-bench-press" target="_blank">Dumbbell Bench Press</a> (mancuernas)</div>
+<div class="alt-item">· Machine Chest Press (maquina)</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">3</div><div><div class="exercise-name">Squat</div><div class="exercise-sets">2x5 + 1xAMRAP · +2.5kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/barbell-squat" target="_blank">Ver forma correcta →</a>
+<span class="exercise-weight">17.5kg</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/dumbbell-goblet-squat" target="_blank">Goblet Squat</a> (mancuerna)</div>
+<div class="alt-item">· Leg Press (maquina)</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">+</div><div><div class="exercise-name">Dead Bug</div><div class="exercise-sets">2-3x10-12 cada lado</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/dead-bug" target="_blank">Ver forma correcta →</a>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- WORKOUT B -->
+<div id="tab-b" class="tab-content">
+<div class="workout-b" style="padding-top:16px">
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">1</div><div><div class="exercise-name">Assisted Chin Up</div><div class="exercise-sets">2x5 + 1xAMRAP · Maquina asistida · +1.25kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/chin-ups" target="_blank">Ver forma chin-up →</a>
+<span class="exercise-weight">35kg asistencia</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· Lat Pulldown (maquina)</div>
+<div class="alt-item">· Band-assisted Chin Ups</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">2</div><div><div class="exercise-name">Overhead Press</div><div class="exercise-sets">2x5 + 1xAMRAP · +1.25kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/dumbbell-overhead-press" target="_blank">Ver forma correcta →</a>
+<span class="exercise-weight">19.15kg</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/dumbbell-overhead-press" target="_blank">Dumbbell Shoulder Press</a> (mancuernas)</div>
+<div class="alt-item">· Machine Shoulder Press (maquina)</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">3</div><div><div class="exercise-name">Deadlift</div><div class="exercise-sets">2x5 + 1xAMRAP · +2.5kg/sesion</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/dumbbell-romanian-deadlift" target="_blank">Ver forma correcta →</a>
+<span class="exercise-weight">32.5kg</span>
+</div>
+<div class="alts"><div class="alt-title">Alternativas</div>
+<div class="alt-item">· <a href="https://musclewiki.com/exercise/dumbbell-romanian-deadlift" target="_blank">Dumbbell Romanian Deadlift</a> (mancuernas)</div>
+<div class="alt-item">· Leg Curl + Hyperextension (maquinas)</div>
+</div>
+</div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-num">+</div><div><div class="exercise-name">Dead Bug</div><div class="exercise-sets">2-3x10-12 cada lado</div></div></div>
+<div class="exercise-body">
+<a class="exercise-link" href="https://musclewiki.com/exercise/dead-bug" target="_blank">Ver forma correcta →</a>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- REGLAS -->
+<div id="tab-rules" class="tab-content">
+<div style="padding-top:16px">
+
+<div class="rules">
+<div class="rule"><span class="rule-icon">⬆️</span><span>Completas todas las reps → +1.25kg upper / +2.5kg lower</span></div>
+<div class="rule"><span class="rule-icon">🚀</span><span>10+ reps en AMRAP → doble aumento</span></div>
+<div class="rule"><span class="rule-icon">⬇️</span><span>Fallas reps → -10% peso, busca nuevo record AMRAP</span></div>
+<div class="rule"><span class="rule-icon">⏱️</span><span>2 min descanso entre series, 3-5 min entre ejercicios</span></div>
+<div class="rule"><span class="rule-icon">🎯</span><span>Para AMRAP en RPE 8-9 (1-2 reps en reserva, no falla)</span></div>
+<div class="rule"><span class="rule-icon">📊</span><span>Cada ejercicio se trackea independiente</span></div>
+</div>
+
+<div class="sh"><h2>Calorias</h2><p>28 años · 180cm · 80kg · objetivo: -0.3kg/semana</p></div>
+
+<div class="rules">
+<div class="rule"><span class="rule-icon">🔥</span><span>Target: 2200-2300 cal/dia</span></div>
+<div class="rule"><span class="rule-icon">🥩</span><span>Proteina: 155g/dia (prioridad)</span></div>
+<div class="rule"><span class="rule-icon">🥑</span><span>Grasa: 70g/dia</span></div>
+<div class="rule"><span class="rule-icon">🍞</span><span>Carbos: ~240g (lo que sobre)</span></div>
+<div class="rule"><span class="rule-icon">🚶</span><span>Mantener 10k pasos/dia (~400 cal extra)</span></div>
+</div>
+
+<div class="sh"><h2>Despues de BBR</h2><p>Cambiar en 8-12 semanas</p></div>
+
+<div class="rules">
+<div class="rule"><span class="rule-icon">1️⃣</span><span>GZCLP — mas volumen, still linear progression</span></div>
+<div class="rule"><span class="rule-icon">2️⃣</span><span>5/3/1 for Beginners — periodizado con accessories</span></div>
+</div>
+
+</div>
+</div>
+
+<div class="footer">Hecho por <span>Krisinho</span> · Basic Beginner Routine · /r/fitness</div>
+
+</div>
+
+<script>
+function showTab(name){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+document.getElementById('tab-'+name).classList.add('active');
+event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
